@@ -1,24 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router,Route,Routes } from "react-router-dom";
+import Signin from "./pages/Signin";
+import ResponsiveAppBar from "./components/Navbar";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
+import AdminPage from "./pages/AdminPage";
+import { ToastContainer } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+import { useSelector } from "react-redux";
+import { logout } from "./reducers/user";
+import ProductDetails from "./pages/ProductDetails";
+import Profile from "./pages/Profile";
+import Cart from "./pages/Cart";
 
 function App() {
+  const online=useSelector((state)=>state.user.online)
+    const user=useSelector((state)=>state.user.user)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    < >
+      <Router>
+      <ResponsiveAppBar/>
+      <ToastContainer/>
+        <Routes>
+          {!online&&<Route path="/signin" element={<Signin/>}></Route>}
+          {!online&&<Route path="/register" element={<Register/>}></Route>}
+          <Route path="/" element={<Home/>}></Route>
+          <Route path="/product/:id" element={<ProductDetails/>}></Route>
+          {online&&<Route path="/profile" element={<Profile/>}></Route>}
+          {online&&<Route path="/cart" element={<Cart/>}></Route>}
+          {online&&<Route path="/logout" element={<logout/>}></Route>}
+          {online&&user.isAdmin&&<Route path="/admin" element={<AdminPage/>}></Route>}
+          <Route path="/*" element={`error page not found`}></Route>
+        </Routes>
+      </Router>
+    </>
   );
 }
 
